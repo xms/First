@@ -1,4 +1,7 @@
-﻿function getNum(obj) {
+﻿
+
+/*右邊數字鍵盤 - 輸入數字*/
+function getNum(obj) {
     var tbNum = document.getElementById("Num");
     if (tbNum.value == 0)
         tbNum.value = obj.innerText;
@@ -8,12 +11,14 @@
 
 //  ---------------------------------------
 
+/*右邊數字鍵盤 - 清除數字*/
 function clearNum() {
     document.getElementById("Num").value = 0;
 }
 
 //  ---------------------------------------
 
+/*右邊數字鍵盤 - 更正(BACK)*/
 function backSpace() {
     var strNum = document.getElementById("Num").value;
     if (strNum.length > 1)
@@ -37,11 +42,12 @@ $(document).ready(function () {
     var typeName = null; //tpn的代號
     num.val(0);
     paid.val(0);
-    rec.html(total.attr('value')).attr('value', total.attr('value'));
-    bal.html(total.attr('value')).attr('value', total.attr('value'));
+    rec.html(total.attr('value')).attr('value', total.attr('value')); //應收金額初始值:用餐金額
+    bal.html(total.attr('value')).attr('value', total.attr('value')); //尚差金額初始值:用餐金額
 
+    //輸入數字後，按輸入(如果沒有選擇項目的話，會出現警告視窗)
     $("#enterNum").click(function () {
-        //判斷選擇的項目
+        
         typeName = getTypeName(tpn.val());
 
 
@@ -50,18 +56,16 @@ $(document).ready(function () {
             return;
         }
         else {
-
             if ((tpn.val() == "discount") && ($('#lbdiscount').length == 0)) { //未輸入過折扣
                 result.append("<div class='top_one'>" + typeName
                                     + "： <label id='lb" + tpn.val() + "' value='0." + num.val() + "'>"
                                     + num.val() + " 折</label><input type='button' id='cancelDC' value='取消折扣' /></div>");
-
                 //折扣後應收金額
                 rec.attr('value', total.attr('value') * ("0." + num.val()) * 1).html(total.attr('value') * (("0." + num.val()) * 1));
                 //尚缺金額
                 bal.attr('value', rec.attr('value') - paid.val()).html(rec.attr('value') - paid.val());
 
-            }
+            } //------------------------------------------------------------------------------------------------
             else if (tpn.val() == "discount") { //輸入過折扣
                 $('#lbdiscount').attr('value', '0.' + num.val()).html(num.val() + " 折");
 
@@ -70,12 +74,12 @@ $(document).ready(function () {
                 //尚缺金額
                 bal.attr('value', rec.attr('value') - paid.val()).html(rec.attr('value') - paid.val());
 
-            }
+            } //------------------------------------------------------------------------------------------------
             else { //輸入的不是折扣
 
                 result.append("<div class='top_one'>"
                                 + typeName + "： <label id='lb" + tpn.val() + "' value='" + num.val() + "'>"
-                                    + num.val() + "</label></div>");
+                                + num.val() + "</label></div>");
                 paid.val(paid.val() * 1 + num.val() * 1);
 
                 //尚缺金額
@@ -85,23 +89,30 @@ $(document).ready(function () {
             tpn.val(null);
             typeName = null;
             $('#lbType').html(null);
-        } //End of else
+        }
     });
 
+    //  ---------------------------------------
 
+    //點擊項目
     $('.btnMoney').click(function () {
         tpn.val(this.id);
         $('#lbType').html(getTypeName(this.id));
     });
 
 
+    //  ---------------------------------------
+
+    //數字鍵盤下面的DEL
     $('#del').click(function () {
         if (confirm("確定要清除付款資料？"))
             location.reload();
 
     });
 
+    //  ---------------------------------------
 
+    //取消折扣
     $(document)
         .on('click', '#cancelDC', function () {
             $('#cancelDC').parent().remove();
@@ -111,15 +122,23 @@ $(document).ready(function () {
             bal.attr('value', rec.attr('value') - paid.val()).html(rec.attr('value') - paid.val());
         });
 
+    //  ---------------------------------------
 
+    //折扣券div 淡入及淡出
     $('#coupon').click(function () {
         btnlist.fadeToggle();
     });
 
+    //  ---------------------------------------
+
+    //折扣券div 未選擇項目淡出
     btnlist.click(function () {
         btnlist.fadeOut();
     });
 
+    //  ---------------------------------------
+
+    //選擇使用的折扣券
     $(".btnCoupon").click(function () {
         paid.val();
         result.append("<div class='top_two'>" + "<label class='lbCoupon' value='" + this.id + "'>" + this.value + "</label>" + "</div>");
@@ -128,11 +147,12 @@ $(document).ready(function () {
         bal.attr('value', rec.attr('value') - paid.val()).html(rec.attr('value') - paid.val());
     });
 
+    //  ---------------------------------------
 
+    //結帳
     $('#checkout').click(function () {
         if ($('#lbBalance').attr('value') == "0") {
             alert("結帳完成！");
-            //document.location.href = "http://herbian.ait.net.tw/FrontDesk/Pay/TableList.aspx";
             document.location.href = "../Index.aspx";
         }
         else {
@@ -140,35 +160,30 @@ $(document).ready(function () {
         }
     });
 
-
-
-
-});          //end of jQuery code
+});          //end of jQuery code 之 怎麼可以這麼亂Orz
 
 //  ---------------------------------------
 
-    function getTypeName(objID) {
-        var typeName = null;
-        switch (objID) {
-            case 'cash':
-                typeName = "現金";
-                break;
-            case 'credit':
-                typeName = "信用卡";
-                break;
-            case 'discount':
-                typeName = "折扣";
-                break;
-            /*case 'coupon':
-            typeName = "團購券";
-            break;*/ 
-            case 'gift':
-                typeName = "禮券";
-                break;
-            case 'reduce':
-                typeName = "折價";
-                break;
+/*判斷選擇的項目*/
+function getTypeName(objID) {
+    var typeName = null;
+    switch (objID) {
+        case 'cash':
+            typeName = "現金";
+            break;
+        case 'credit':
+            typeName = "信用卡";
+            break;
+        case 'discount':
+            typeName = "折扣";
+            break;
+        case 'gift':
+            typeName = "禮券";
+            break;
+        case 'reduce':
+            typeName = "折價";
+            break;
 
-        } //End of switch
-        return typeName;
+    } 
+    return typeName;
 }
