@@ -1,25 +1,33 @@
 <?php
 
+	//流程控制...要改的地方 @_@
+	function getValidResult($_POST)
+	{
+		$arrData = $_POST;
+		
+		//錯誤欄位name與顯示名稱對應
+		$arrErrItem = array("start_date" => "開放期間(起)",
+							"end_date" => "開放期間(迄)",
+							"srcIP" => "來源IP",
+							"destIP" => "目的IP" );
+		//驗證項目與顯示錯誤訊息對應
+		$arrErrMsg = array("str_null" => "不可為空值",
+							"str_date" => "日期格式錯誤（正確格式如" .@date("Y-m-d"). "）",
+							"arr_null" => "至少須填一筆資料",
+							"arr_ip" => "與IPv4或IPv6格式不相符" );
+		//需要驗證的資料
+		$arrItem = array("str_null" => array("start_date", "end_date"),
+						 "str_date" => array("start_date", "end_date"), 
+						 "arr_null" => array("srcIP", "destIP"),
+						 "arr_ip" => array("srcIP", "destIP"));
+		//錯誤訊息				
+		$strErrorCode = str_replace(":", "：", str_replace(",", "<BR>", getValid($arrData, $arrItem)));
+		
+		$result = getErrStrToMsg($strErrorCode, $arrErrItem, $arrErrMsg);
+		
+		return $result;
+	}
 	
-	//錯誤欄位name與顯示名稱對應
-	$arrErrItem = array("start_date" => "開放期間(起)",
-						"end_date" => "開放期間(迄)",
-						"srcIP" => "來源IP",
-						"destIP" => "目的IP" );
-	//驗證項目與顯示錯誤訊息對應
-	$arrErrMsg = array("str_null" => "不可為空值",
-						"str_date" => "日期格式錯誤（正確格式如" .@date("Y-m-d"). "）",
-						"arr_null" => "至少須填一筆資料",
-						"arr_ip" => "與IPv4或IPv6格式不相符" );
-	//需要驗證的資料
-	$arrItem = array("str_null" => array("start_date", "end_date"),
-					 "str_date" => array("start_date", "end_date"), 
-					 "arr_null" => array("srcIP", "destIP"),
-					 "arr_ip" => array("srcIP", "destIP"));
-	//錯誤訊息				
-	$strErrorCode = str_replace(":", "：", str_replace(",", "<BR>", getValid($arrData, $arrItem)));
-	
-	$msg = getErrStrToMsg($strErrorCode, $arrErrItem, $arrErrMsg);
 	
 	//將取得的Error code轉換成系統顯示的錯誤訊息
 	function getErrStrToMsg($strError, $arrErrItem, $arrErrMsg)
